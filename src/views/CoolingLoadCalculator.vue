@@ -87,19 +87,19 @@ const suggestedCapacity = computed(() => {
         <div>
           <label for="usage" class="block text-sm font-medium text-gray-700">Mục đích sử dụng</label>
           <select id="usage" v-model="selectedUsage" class="mt-1 w-full p-2 border rounded-md bg-white">
-            <option v-for="(value, key) in USAGE_TYPES" :key="key" :value="key">{{ key }}</option>
+            <option v-for="key in Object.keys(USAGE_TYPES)" :key="key" :value="key">{{ key }}</option>
           </select>
         </div>
         <div>
           <label for="material" class="block text-sm font-medium text-gray-700">Vật liệu & kết cấu</label>
           <select id="material" v-model="selectedMaterial" class="mt-1 w-full p-2 border rounded-md bg-white">
-            <option v-for="(value, key) in BUILDING_MATERIALS" :key="key" :value="key">{{ key }}</option>
+            <option v-for="key in Object.keys(BUILDING_MATERIALS)" :key="key" :value="key">{{ key }}</option>
           </select>
         </div>
         <div>
           <label for="exposure" class="block text-sm font-medium text-gray-700">Mức độ tiếp xúc nắng</label>
           <select id="exposure" v-model="selectedExposure" class="mt-1 w-full p-2 border rounded-md bg-white">
-            <option v-for="(value, key) in SUN_EXPOSURE" :key="key" :value="key">{{ key }}</option>
+            <option v-for="key in Object.keys(SUN_EXPOSURE)" :key="key" :value="key">{{ key }}</option>
           </select>
         </div>
       </div>
