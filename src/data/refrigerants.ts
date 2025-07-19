@@ -17,7 +17,7 @@ export interface Refrigerant {
   phuongPhapNap: string;
   doTruotNhiet: number;
   pVanHanhTieuChuan: string;
-  diemToiHan: diemToiHan;
+  diemToiHan: DiemToiHan;
   odp: number;
   soCuu: string;
   ptTable: PTPoint[]; // Bảng tra cứu Áp suất - Nhiệt độ
