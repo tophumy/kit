@@ -3,10 +3,23 @@
 type PTPoint = [number, number];
 
 // Định nghĩa "hình dạng" của một đối tượng môi chất
+export interface DiemToiHan {
+  temp: number;
+  apSuat: number;
+}
 export interface Refrigerant {
   name: string;
   type: string; // Loại gas, ví dụ HFC
   gwp: number; // Global Warming Potential
+  ashrae: string;
+  ppe: string;
+  dau: string;
+  phuongPhapNap: string;
+  doTruotNhiet: number;
+  pVanHanhTieuChuan: string;
+  diemToiHan: diemToiHan;
+  odp: number;
+  soCuu: string;
   ptTable: PTPoint[]; // Bảng tra cứu Áp suất - Nhiệt độ
 }
 
