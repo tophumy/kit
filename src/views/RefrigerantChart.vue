@@ -9,18 +9,24 @@ const temperature = ref<number>(0);
 const pressure = ref<number>(0); // **QUAN TRỌNG**: Biến này LUÔN lưu trữ giá trị ở đơn vị CƠ SỞ (bar)
 
 // --- THAY ĐỔI MỚI: Thêm trạng thái cho đơn vị áp suất ---
-type PressureUnit = 'bar' | 'MPa';
+type PressureUnit = 'bar' | 'MPa' | 'psi';
 const selectedUnit = ref<PressureUnit>('bar');
 
 // --- PHẦN 3: HÀM TIỆN ÍCH & CHUYỂN ĐỔI ĐƠN VỊ ---
 const BAR_TO_MPA = 0.1;
 const MPA_TO_BAR = 10;
+const BAR_TO_PSI = 14.5038;
+const PSI_TO_BAR = 1 / BAR_TO_PSI;
 
 function convertPressure(value: number, from: PressureUnit, to: PressureUnit): number {
   if (from === to) return value;
   if (from === 'bar' && to === 'MPa') return value * BAR_TO_MPA;
   if (from === 'MPa' && to === 'bar') return value * MPA_TO_BAR;
-  return value; // Mặc định không đổi
+  if (from === 'bar' && to === 'psi') return value * BAR_TO_PSI;
+  if (from === 'psi' && to === 'bar') return value * PSI_TO_BAR;
+  //return value; // Mặc định không ĐỔI
+  const valueInBar = convertPressure(value, from, 'bar');
+  return convertPressure(valueInBar, 'bar', to);
 }
 
 function interpolate(x: number, x0: number, y0: number, x1: number, y1: number): number {
@@ -43,6 +49,8 @@ const displayPressure = computed({
   get() {
     // Chuyển giá trị áp suất cơ sở (bar) sang đơn vị người dùng đã chọn.
     const converted = convertPressure(pressure.value, 'bar', selectedUnit.value);
+    // PSI là số lớn, không cần số lẻ, hoặc chỉ cần 1 số lẻ
+    if (selectedUnit.value === 'psi') return parseFloat(converted.toFixed(1));
     // Làm tròn để hiển thị đẹp hơn. MPa cần nhiều số lẻ hơn.
     return selectedUnit.value === 'MPa' ? parseFloat(converted.toFixed(4)) : parseFloat(converted.toFixed(2));
   },
@@ -57,14 +65,21 @@ const displayPressure = computed({
 const pressureSliderMin = computed(() => {
   if (!selectedRefrigerantData.value) return 0;
   const minBar = selectedRefrigerantData.value.ptTable[0][1];
-  return convertPressure(minBar, 'bar', selectedUnit.value);
+  //return convertPressure(minBar, 'bar', selectedUnit.value); cũ
+  //mới:
+  const converted = convertPressure(minBar, 'bar', selectedUnit.value);
+  // Làm tròn giá trị min cho đẹp
+  return Math.floor(converted);
 });
 
 const pressureSliderMax = computed(() => {
     if (!selectedRefrigerantData.value) return 100;
     const table = selectedRefrigerantData.value.ptTable;
     const maxBar = table[table.length - 1][1];
-    return convertPressure(maxBar, 'bar', selectedUnit.value);
+    //return convertPressure(maxBar, 'bar', selectedUnit.value); cũ
+    const converted = convertPressure(maxBar, 'bar', selectedUnit.value);
+    // Làm tròn giá trị max cho đẹp
+    return Math.ceil(converted);
 });
 
 // --- PHẦN 5: LOGIC ĐỒNG BỘ HÓA (WATCHERS) ---
@@ -143,6 +158,15 @@ initializeValues(); // Gọi lần đầu khi component được tạo
           <h2 class="text-xl font-semibold text-gray-800 mb-2">{{ selectedRefrigerantData.name }}</h2>
           <p><strong>Loại:</strong> {{ selectedRefrigerantData.type }}</p>
           <p><strong>GWP:</strong> {{ selectedRefrigerantData.gwp }}</p>
+          <p><strong>ASHRAE:</strong> {{ selectedRefrigerantData.ashrae }}</p>
+          <p><strong>PPE:</strong> {{ selectedRefrigerantData.ppe }}</p>
+          <p><strong>Dầu:</strong> {{ selectedRefrigerantData.dau }}</p>
+          <p><strong>Phương pháp nạp:</strong> {{ selectedRefrigerantData.phuongPhapNap }}</p>
+          <p><strong>Độ trượt T (glide):</strong> {{ selectedRefrigerantData.doTruotNhiet }}</p>
+          <p><strong>P vận hành tiêu chuẩn (hút):</strong> {{ selectedRefrigerantData.pVanHanhTieuChuan }}</p>
+          <p><strong>T&P tới hạn:</strong> {{ selectedRefrigerantData.diemToiHan.temp }}°C; {{ selectedRefrigerantData.diemToiHan.apSuat }} bar</p>
+          <p><strong>ODP:</strong> {{ selectedRefrigerantData.odp }}</p>
+          <p><strong>Sơ cứu:</strong> {{ selectedRefrigerantData.soCuu }}</p>
         </div>
 
         <div class="bg-white p-4 rounded-lg border border-gray-200 shadow space-y-4">
@@ -161,6 +185,12 @@ initializeValues(); // Gọi lần đầu khi component được tạo
                       :class="['px-3 py-1 text-sm rounded-full', { 'bg-purple-600 text-white': selectedUnit === 'MPa' }]"
                   >
                       MPa
+                  </button>
+                  <button 
+                      @click="selectedUnit = 'psi'"
+                      :class="['px-3 py-1 text-sm rounded-full transition-colors duration-200', { 'bg-purple-600 text-white': selectedUnit === 'psi' }]"
+                  >
+                      psi
                   </button>
               </div>
           </div>

@@ -2,6 +2,9 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 
+// Import Header component
+import Header from './components/Header.vue';
+
 // Import các component công cụ
 import ErrorCodeLookup from './views/ErrorCodeLookup.vue'
 import RefrigerantChart from './views/RefrigerantChart.vue'
@@ -60,14 +63,18 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <main>
-    <div ref="tool1">
+  <Header />
+
+  <!-- Thêm class `pt-16` để nội dung không bị header che mất -->
+  <main class="pt-16">
+    <!-- Gán ID cho từng công cụ để link trong header có thể trỏ tới -->
+    <div id="tool-1" ref="tool1">
       <ErrorCodeLookup />
     </div>
-    <div ref="tool2">
+    <div id="tool-2" ref="tool2">
       <RefrigerantChart />
     </div>
-    <div ref="tool3">
+    <div id="tool-3" ref="tool3">
       <CoolingLoadCalculator />
     </div>
   </main>

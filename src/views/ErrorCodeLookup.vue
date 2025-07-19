@@ -106,8 +106,9 @@ onUnmounted(() => {
 <template>
   <div class="tool-section bg-gray-50 text-gray-800 p-4">
     <div class="w-full max-w-md mx-auto">
-      <h1 class="text-2xl font-bold text-center mb-6 text-blue-600">Tra Cứu Mã Lỗi</h1>
+      <h1 class="text-2xl font-bold text-center mb-6 text-blue-600">Tra Cứu Mã Lỗi Máy Lạnh</h1>
       <div class="space-y-4">
+      <form @submit.prevent class="space-y-4">
         
         <!-- THAY ĐỔI MỚI: Bọc ô nhập Hãng bằng 1 div và gán ref -->
         <div class="relative" ref="brandWrapper">
@@ -151,6 +152,7 @@ onUnmounted(() => {
             </li>
           </ul>
         </div>
+      </form>
       </div>
 
       <!-- Vùng kết quả (không đổi) -->
